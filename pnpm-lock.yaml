@@ -11,6 +11,9 @@ importers:
       '@arco-design/web-react':
         specifier: ^2.63.1
         version: 2.63.1(@types/react@18.3.3)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
+      '@douyinfe/semi-icons':
+        specifier: ^2.62.1
+        version: 2.62.1(react@18.3.1)
       '@douyinfe/semi-ui':
         specifier: ^2.62.1
         version: 2.62.1(react-dom@18.3.1(react@18.3.1))(react@18.3.1)

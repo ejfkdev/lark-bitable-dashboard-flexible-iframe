@@ -13,6 +13,7 @@
   },
   "dependencies": {
     "@arco-design/web-react": "^2.63.1",
+    "@douyinfe/semi-icons": "^2.62.1",
     "@douyinfe/semi-ui": "^2.62.1",
     "@lark-base-open/js-sdk": "^0.4.0",
     "@semi-bot/semi-theme-feishu-dashboard": "^1.0.4",
