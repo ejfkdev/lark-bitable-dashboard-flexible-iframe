@@ -7,6 +7,10 @@ interface ICustomConfig {
     width: number;
     height: number;
     fit: string;
+    refresh: boolean;
+    interval: number;
+    intervalUnit: number;
     view?: boolean;
-    clickable?: boolean;
+    clickable: boolean;
+
 }

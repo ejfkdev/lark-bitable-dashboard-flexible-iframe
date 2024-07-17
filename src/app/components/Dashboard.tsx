@@ -37,7 +37,10 @@ export default function Home() {
     height: 1440,
     fit: "contain",
     view: true,
-    clickable: false,
+    clickable: true,
+    refresh: true,
+    interval: 10,
+    intervalUnit: 60 * 1000,
   });
 
   const setConfig = (c: ICustomConfig) => {
@@ -48,8 +51,12 @@ export default function Home() {
     config.url = c.url;
     config.view = c.view;
     config.webWidth = c.webWidth;
+    config.webHeight = c.webHeight;
     config.width = c.width;
     config.clickable = c.clickable;
+    config.refresh = c.refresh;
+    config.interval = c.interval;
+    config.intervalUnit = c.intervalUnit;
   };
 
   useEffect(() => {
@@ -72,7 +79,6 @@ export default function Home() {
       // 监听配置变化，协同修改配置
       updateConfig({
         ...r.data,
-        view: false,
       });
     });
 
@@ -98,8 +104,6 @@ export default function Home() {
 
   useEffect(() => {
     if (config.view === undefined) config.view = true;
-    if (config.webHeight === undefined || config.url === "")
-      config.webHeight = Math.round(config.webWidth);
     if (config.width > config.webWidth) config.width = config.webWidth;
     console.log(`useEffect config`, config);
     formRef.current?.formApi.setValues(config);
@@ -114,12 +118,16 @@ export default function Home() {
     config.fit,
     config.view,
     config.clickable,
+    config.refresh,
+    config.interval,
+    config.intervalUnit,
   ]);
 
   const onClick = useMemoizedFn(() => {
+    console.log(`save config`, { ...config });
     // 保存配置
     dashboard.saveConfig({
-      customConfig: { ...config },
+      customConfig: JSON.parse(JSON.stringify({ ...config, view: true })),
       dataConditions: [],
     } as any);
   });
@@ -228,7 +236,7 @@ export default function Home() {
               )}
               <Timeline.Item
                 dot={
-                  <Avatar color="red" size="extra-small">
+                  <Avatar color="blue" size="small">
                     1
                   </Avatar>
                 }
@@ -249,7 +257,7 @@ export default function Home() {
               </Timeline.Item>
               <Timeline.Item
                 dot={
-                  <Avatar color="red" size="extra-small">
+                  <Avatar color="blue" size="small">
                     2
                   </Avatar>
                 }
@@ -435,7 +443,7 @@ export default function Home() {
               </Timeline.Item>
               <Timeline.Item
                 dot={
-                  <Avatar color="red" size="extra-small">
+                  <Avatar color="blue" size="small">
                     3
                   </Avatar>
                 }
@@ -443,7 +451,14 @@ export default function Home() {
                 <Typography.Text style={{ fontSize: "1.25rem" }}>
                   展示配置
                 </Typography.Text>
-                <Form.Switch field="view" label="实时预览" />
+                <Row>
+                  <Col span={12}>
+                    <Form.Switch field="clickable" label="允许点击网页" />
+                  </Col>
+                  <Col span={12}>
+                    <Form.Switch field="view" label="实时预览" />
+                  </Col>
+                </Row>
                 <Form.RadioGroup
                   className="gap-0 w-full"
                   disabled={!config.view}
@@ -477,7 +492,43 @@ export default function Home() {
                     填满面板
                   </Form.Radio>
                 </Form.RadioGroup>
-                <Form.Switch field="clickable" label="允许点击网页" />
+                <Row>
+                  <Col span={12}>
+                    <Form.Switch field="refresh" label="定时刷新" />
+                  </Col>
+                  <Col span={12}>
+                    <Form.RadioGroup
+                      field="intervalUnit"
+                      label="时间单位"
+                      type="button"
+                      defaultValue={60 * 1000}
+                    >
+                      <Form.Radio value={60 * 1000}>分钟</Form.Radio>
+                      <Form.Radio value={1 * 1000}>秒</Form.Radio>
+                    </Form.RadioGroup>
+                  </Col>
+                </Row>
+                <Form.Slider
+                  field="interval"
+                  label="刷新间隔"
+                  min={1}
+                  max={60}
+                  marks={{
+                    1: " 1",
+                    5: "5",
+                    10: "10",
+                    15: "15",
+                    20: "20",
+                    30: "30",
+                    45: "45",
+                    60: "60",
+                  }}
+                  defaultValue={10}
+                  tipFormatter={(v) =>
+                    `${v} ${config.intervalUnit === 60 * 1000 ? "分钟" : "秒"}`
+                  }
+                  handleDot={{ size: "4px", color: "blue" }}
+                ></Form.Slider>
               </Timeline.Item>
               <Timeline.Item>
                 <Typography.Text
@@ -519,6 +570,10 @@ const demos: ICustomConfig[] = shuffle([
     width: 400,
     height: 500,
     fit: "contain",
+    refresh: true,
+    interval: 10,
+    intervalUnit: 60 * 1000,
+    clickable: false,
   },
   {
     url: "https://weather.cma.cn",
@@ -526,19 +581,27 @@ const demos: ICustomConfig[] = shuffle([
     webHeight: 1440,
     left: 140,
     top: 180,
-    width: 1170,
+    width: 1160,
     height: 280,
     fit: "contain",
+    refresh: true,
+    interval: 10,
+    intervalUnit: 60 * 1000,
+    clickable: false,
   },
   {
-    url: "https://gushitong.baidu.com/foreign/global-USDCNY",
+    url: "https://gushitong.baidu.com/index/ab-000001",
     webWidth: 1440,
     webHeight: 1440,
     left: 120,
     top: 220,
-    width: 790,
-    height: 750,
+    width: 390,
+    height: 150,
     fit: "contain",
+    refresh: true,
+    interval: 30,
+    intervalUnit: 1 * 1000,
+    clickable: false,
   },
   {
     url: "https://hao.360.com/rili/",
@@ -549,6 +612,10 @@ const demos: ICustomConfig[] = shuffle([
     width: 300,
     height: 475,
     fit: "contain",
+    refresh: true,
+    interval: 60,
+    intervalUnit: 60 * 1000,
+    clickable: false,
   },
   {
     url: "https://notion-widgets.rylan.cn/",
@@ -559,6 +626,10 @@ const demos: ICustomConfig[] = shuffle([
     width: 270,
     height: 480,
     fit: "contain",
+    refresh: true,
+    interval: 30,
+    intervalUnit: 1 * 1000,
+    clickable: false,
   },
   {
     url: "https://www.feishu.cn/product/base",
@@ -569,6 +640,10 @@ const demos: ICustomConfig[] = shuffle([
     width: 720,
     height: 165,
     fit: "contain",
+    refresh: false,
+    interval: 60,
+    intervalUnit: 60 * 1000,
+    clickable: true,
   },
   {
     url: "https://www.feishu.cn/community/articles/base",
@@ -577,18 +652,26 @@ const demos: ICustomConfig[] = shuffle([
     left: 970,
     top: 500,
     width: 240,
-    height: 450,
+    height: 430,
     fit: "contain",
+    refresh: false,
+    interval: 60,
+    intervalUnit: 60 * 1000,
+    clickable: true,
   },
   {
     url: "https://www.feishu.cn/service",
     webWidth: 1440,
-    webHeight: 1440,
+    webHeight: 3000,
     left: 70,
-    top: 2240,
+    top: 2255,
     width: 1300,
-    height: 470,
+    height: 455,
     fit: "contain",
+    refresh: false,
+    interval: 60,
+    intervalUnit: 60 * 1000,
+    clickable: true,
   },
   {
     url: "https://dynamicwallpaper.club/wallpaper/br31l421g1d",
@@ -599,16 +682,24 @@ const demos: ICustomConfig[] = shuffle([
     width: 1160,
     height: 655,
     fit: "cover",
+    refresh: false,
+    interval: 10,
+    intervalUnit: 60 * 1000,
+    clickable: true,
   },
   {
     url: "https://bizhi.360.cn/#/",
     webWidth: 768,
-    webHeight: 768,
-    left: 0,
+    webHeight: 1465,
+    left: 10,
     top: 1030,
-    width: 765,
-    height: 440,
+    width: 745,
+    height: 425,
     fit: "cover",
+    refresh: true,
+    interval: 60,
+    intervalUnit: 60 * 1000,
+    clickable: false,
   },
   {
     url: "https://tool.fiaox.com/clock/",
@@ -619,16 +710,24 @@ const demos: ICustomConfig[] = shuffle([
     width: 235,
     height: 210,
     fit: "static",
+    refresh: false,
+    interval: 5,
+    intervalUnit: 60 * 1000,
+    clickable: false,
   },
   {
     url: "https://www.lddgo.net/common/digital-clock",
     webWidth: 1440,
     webHeight: 1440,
     left: 485,
-    top: 375,
+    top: 285,
     width: 475,
     height: 115,
     fit: "static",
+    refresh: false,
+    interval: 10,
+    intervalUnit: 60 * 1000,
+    clickable: false,
   },
   {
     url: "https://m.weibo.cn/u/7886214082?luicode=10000011&lfid=231583",
@@ -639,6 +738,10 @@ const demos: ICustomConfig[] = shuffle([
     width: 180,
     height: 180,
     fit: "static",
+    refresh: true,
+    interval: 60,
+    intervalUnit: 60 * 1000,
+    clickable: false,
   },
   {
     url: "https://toolwa.com/jizhi/",
@@ -649,38 +752,10 @@ const demos: ICustomConfig[] = shuffle([
     width: 480,
     height: 250,
     fit: "contain",
-  },
-  {
-    url: "https://hitokoto.cn/",
-    webWidth: 480,
-    webHeight: 450,
-    left: 0,
-    top: 90,
-    width: 480,
-    height: 275,
-    fit: "contain",
-  },
-  {
-    url: "https://www.vgfront.com/",
-    webWidth: 480,
-    webHeight: 640,
-    left: 0,
-    top: 0,
-    width: 480,
-    height: 640,
-    fit: "contain",
-    clickable: true,
-  },
-  {
-    url: "https://ccwh113.com/my/",
-    webWidth: 480,
-    webHeight: 480,
-    left: 110,
-    top: 75,
-    width: 275,
-    height: 275,
-    fit: "contain",
-    clickable: true,
+    refresh: true,
+    interval: 15,
+    intervalUnit: 1000,
+    clickable: false,
   },
   {
     url: "https://piano.starrynets.com/",
@@ -692,6 +767,23 @@ const demos: ICustomConfig[] = shuffle([
     height: 220,
     fit: "contain",
     clickable: true,
+    refresh: false,
+    interval: 10,
+    intervalUnit: 60 * 1000,
+  },
+  {
+    url: "https://www.shuxuele.com/time-clocks-analog-digital.html",
+    webWidth: 480,
+    webHeight: 1440,
+    left: 120,
+    top: 405,
+    width: 240,
+    height: 365,
+    fit: "contain",
+    clickable: false,
+    refresh: false,
+    interval: 10,
+    intervalUnit: 60 * 1000,
   },
 ]);
 let lastIndex = 0;

@@ -118,3 +118,8 @@ body {
 .iframe-config-slider .arco-slider-road-vertical .arco-slider-bar {
     display: none !important;
 }
+
+/* bugfix */
+.semi-timeline-item-content .semi-slider-mark {
+    word-break: normal;
+}

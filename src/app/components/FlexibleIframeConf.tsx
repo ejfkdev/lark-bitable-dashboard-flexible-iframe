@@ -179,7 +179,7 @@ export default function FlexibleIframeConf({
 
   return (
     <div
-      className="box-border flex flex-1 border-2 border-gray-300 shadow-xl rounded-2xl w-full max-w-[calc(100vh)] h-full overflow-hidden"
+      className="box-border flex flex-1 border-2 border-gray-300 shadow-xl rounded-2xl w-full h-full overflow-hidden"
       onWheel={onWheel}
     >
       <div className="flex p-4 overflow-hidden grow">
