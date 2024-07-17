@@ -25,7 +25,7 @@ export default function Home() {
   const [isCreate, setIsCreate] = useState(false);
   const [isConfig, setIsConfig] = useState(false);
   const formRef = useRef<Form>(null);
-  const [webBaseHeight, setWebBaseHeight] = useState(0);
+  const [webBaseHeight, setWebBaseHeight] = useState(1440);
   // const { t } = useTranslation();
   const config = useReactive<ICustomConfig>({
     url: "",
